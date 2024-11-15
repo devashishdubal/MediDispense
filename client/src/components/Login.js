@@ -1,9 +1,20 @@
 import React, { useState } from 'react';
 import { useAuth } from '../Contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import {
+    Box,
+    Button,
+    Container,
+    TextField,
+    Typography,
+    Link,
+    Grid,
+    Alert,
+    AlertTitle,
+} from '@mui/material';
 import './Login.css'; // Import the CSS file
 
-function Auth() {
+function Login() {
     const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
     const { setUser } = useAuth();
     const navigate = useNavigate();
@@ -11,11 +22,15 @@ function Auth() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState(''); // Only used for register
+    const [alert, setAlert] = useState({ type: '', message: '' }); // Alert state
 
     const handleAuth = async () => {
         try {
             if (!email || !password || (!isLogin && !name)) {
-                alert('Please fill out all required fields.');
+                setAlert({
+                    type: 'error',
+                    message: 'Please fill out all required fields.',
+                });
                 return;
             }
 
@@ -29,80 +44,135 @@ function Auth() {
                 credentials: 'include',
             });
 
+            if (!response.ok) {
+                const errorData = await response.json();
+                setAlert({
+                    type: 'error',
+                    message: errorData.message || 'Something went wrong. Please try again.',
+                });
+                return;
+            }
+
             const user = await response.json();
             setUser(user);
-            alert(isLogin ? 'Login successful' : 'Registration successful');
-            navigate('/dashboard');
+            setAlert({
+                type: 'success',
+                message: isLogin ? 'Login successful!' : 'Registration successful!',
+            });
+            setTimeout(() => navigate('/dashboard'), 1500); // Redirect after success
         } catch (error) {
             console.log(error);
-            alert('Something went wrong. Please try again.');
+            setAlert({
+                type: 'error',
+                message: 'Something went wrong. Please try again.',
+            });
         }
     };
 
     return (
-        <div className="auth-container">
-            <div className="auth-box">
-                <h2 className="auth-heading">{isLogin ? 'Login' : 'Register'}</h2>
-                <div className="auth-form">
+        <Container maxWidth="sm" className="auth-container">
+            <Box className="auth-box">
+                <Typography component="h1" variant="h5" className="auth-heading">
+                    {isLogin ? 'Login' : 'Register'}
+                </Typography>
+
+                {/* Display Alert */}
+                {alert.message && (
+                    <Alert
+                        severity={alert.type}
+                        onClose={() => setAlert({ type: '', message: '' })}
+                        className="auth-alert"
+                    >
+                        <AlertTitle>{alert.type === 'error' ? 'Error' : 'Success'}</AlertTitle>
+                        {alert.message}
+                    </Alert>
+                )}
+
+                <Box component="form" noValidate>
                     {!isLogin && (
-                        <div className="form-group">
-                            <label htmlFor="name">Name</label>
-                            <input
-                                type="text"
-                                id="name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder="Enter your name"
-                                className="form-input"
-                            />
-                        </div>
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="name"
+                            label="Name"
+                            name="name"
+                            autoComplete="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="auth-input"
+                        />
                     )}
-                    <div className="form-group">
-                        <label htmlFor="email">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
-                            className="form-input"
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter your password"
-                            className="form-input"
-                        />
-                    </div>
-                    <button onClick={handleAuth} className="auth-button">
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="Email Address"
+                        name="email"
+                        autoComplete="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="auth-input"
+                    />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="auth-input"
+                    />
+                    <Button
+                        type="button"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        className="auth-button"
+                        onClick={handleAuth}
+                    >
                         {isLogin ? 'Login' : 'Register'}
-                    </button>
-                    <p className="auth-toggle">
-                        {isLogin ? (
-                            <>
-                                Don't have an account?{' '}
-                                <span onClick={() => setIsLogin(false)} className="toggle-link">
-                                    Register
-                                </span>
-                            </>
-                        ) : (
-                            <>
-                                Already have an account?{' '}
-                                <span onClick={() => setIsLogin(true)} className="toggle-link">
-                                    Login
-                                </span>
-                            </>
-                        )}
-                    </p>
-                </div>
-            </div>
-        </div>
+                    </Button>
+                    <Grid container justifyContent="center">
+                        <Grid item>
+                            <Typography variant="body2" className="auth-toggle">
+                                {isLogin ? (
+                                    <>
+                                        Don't have an account?{' '}
+                                        <Link
+                                            href="#"
+                                            variant="body2"
+                                            onClick={() => setIsLogin(false)}
+                                            className="toggle-link"
+                                        >
+                                            Register
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        Already have an account?{' '}
+                                        <Link
+                                            href="#"
+                                            variant="body2"
+                                            onClick={() => setIsLogin(true)}
+                                            className="toggle-link"
+                                        >
+                                            Login
+                                        </Link>
+                                    </>
+                                )}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Box>
+        </Container>
     );
 }
 
-export default Auth;
+export default Login;

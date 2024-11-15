@@ -13,6 +13,11 @@ router.post("/register", (req, res) => {
         const email = req.body.email;
         const password = req.body.password;
         // const dateOfBirth = req.body.dateOfBirth;
+        const existingUser = User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: "User already registered with this email." });
+        }
+
         const newUser = new User({
             name: name,
             email: email,
@@ -23,7 +28,7 @@ router.post("/register", (req, res) => {
             console.log('User saved:', user)
             return res.status(201).json(user);
         })
-        .catch(error => console.error('Error saving user:', error));
+            .catch(error => console.error('Error saving user:', error));
 
     } catch (error) {
         console.log(error);
@@ -37,15 +42,15 @@ router.post("/login", (req, res) => {
         const password = req.body.password;
         User.findOne({ email: email }).then(user => {
             if (!user) {
-                return res.status(401).send("User not found");
+                return res.status(401).json({ message: "User not found" });
             } else if (user.password !== password) {
-                return res.status(401).send("Invalid password");
-            } 
+                return res.status(401).json({ message: "Invalid password" });
+            }
             return res.status(200).send(user);
         });
     } catch (error) {
         console.log(error);
-        res.status(500).send("Error logging in");
+        res.status(500).json({ message: "Error logging in"});
     }
 });
 
