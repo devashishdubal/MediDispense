@@ -31,10 +31,19 @@ function Auth() {
 
             const endpoint = 'http://localhost:8000/users/' + (isLogin ? 'login' : 'register');
             console.log(endpoint);
-            const { data } = await axios.post(endpoint, {
-                name, email, password
-            }, {
-                withCredentials: true // Send credentials (cookies) with the request
+            const response = await fetch(endpoint, {
+                method: 'POST',  // HTTP method
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: "application/json", 
+                    
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                }),
+                credentials: 'include',  // Send cookies with the request (same as withCredentials in axios)
             });
 
             console.log("Success");

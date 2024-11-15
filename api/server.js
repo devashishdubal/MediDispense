@@ -1,22 +1,23 @@
 const express = require('express');
 const mongodb = require('mongodb');
 const mongoose = require('mongoose');
+const cors = require('cors');
 require('dotenv').config();
 
 const userRoutes = require('./routes/user_routes');
 const app = express();
 const port = 8000;
+const corsOptions = {
+    origin: 'http://localhost:3000',  // Specify the frontend origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allowed methods
+    allowedHeaders: ['Content-Type'],  // Allowed headers
+    credentials: true,  // Allow cookies to be sent
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use("/users", userRoutes);
-
-const cors = require('cors');
-const corsOptions ={
-    origin:'http://localhost:3000', 
-    credentials:true,            //access-control-allow-credentials:true
-    // optionSuccessStatus:200,
-    methods:"GET,POST,PUT,DELETE,PATCH"
-}
-app.use(cors(corsOptions));
 
 mongoose.connect(process.env.mongo_url).then(() => {
     console.log('Connected to MongoDB');
