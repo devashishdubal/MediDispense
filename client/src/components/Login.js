@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import {
     Box,
     Button,
-    Container,
     TextField,
     Typography,
     Link,
@@ -13,6 +12,8 @@ import {
     AlertTitle,
 } from '@mui/material';
 import './Login.css'; // Import the CSS file
+import doctorImage from './assets/images/login_doctor_image.png';
+import logoImage from './assets/images/favicon.png';
 
 function Login() {
     const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
@@ -70,108 +71,126 @@ function Login() {
     };
 
     return (
-        <Container maxWidth="sm" className="auth-container">
+        <Box className="auth-container">
             <Box className="auth-box">
-                <Typography component="h1" variant="h5" className="auth-heading">
-                    {isLogin ? 'Login' : 'Register'}
-                </Typography>
+                <Grid container spacing={2}>
+                    {/* Left Side (Form) */}
+                    <Grid item xs={12} md={6} className="form-container">
+                        <Box>
+                            <img
+                                src={logoImage} // Replace with your logo's path
+                                alt="Clinic Logo"
+                                className="auth-logo"
+                            />
 
-                {/* Display Alert */}
-                {alert.message && (
-                    <Alert
-                        severity={alert.type}
-                        onClose={() => setAlert({ type: '', message: '' })}
-                        className="auth-alert"
-                    >
-                        <AlertTitle>{alert.type === 'error' ? 'Error' : 'Success'}</AlertTitle>
-                        {alert.message}
-                    </Alert>
-                )}
-
-                <Box component="form" noValidate>
-                    {!isLogin && (
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="name"
-                            label="Name"
-                            name="name"
-                            autoComplete="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="auth-input"
-                        />
-                    )}
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="auth-input"
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="auth-input"
-                    />
-                    <Button
-                        type="button"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className="auth-button"
-                        onClick={handleAuth}
-                    >
-                        {isLogin ? 'Login' : 'Register'}
-                    </Button>
-                    <Grid container justifyContent="center">
-                        <Grid item>
-                            <Typography variant="body2" className="auth-toggle">
-                                {isLogin ? (
-                                    <>
-                                        Don't have an account?{' '}
-                                        <Link
-                                            href="#"
-                                            variant="body2"
-                                            onClick={() => setIsLogin(false)}
-                                            className="toggle-link"
-                                        >
-                                            Register
-                                        </Link>
-                                    </>
-                                ) : (
-                                    <>
-                                        Already have an account?{' '}
-                                        <Link
-                                            href="#"
-                                            variant="body2"
-                                            onClick={() => setIsLogin(true)}
-                                            className="toggle-link"
-                                        >
-                                            Login
-                                        </Link>
-                                    </>
-                                )}
+                            <Typography component="h1" variant="h5" className="auth-heading">
+                                {isLogin ? 'Login' : 'Register'}
                             </Typography>
-                        </Grid>
+
+                            {/* Display Alert */}
+                            {alert.message && (
+                                <Alert
+                                    severity={alert.type}
+                                    onClose={() => setAlert({ type: '', message: '' })}
+                                    className="auth-alert"
+                                >
+                                    <AlertTitle>{alert.type === 'error' ? 'Error' : 'Success'}</AlertTitle>
+                                    {alert.message}
+                                </Alert>
+                            )}
+
+                            <Box component="form" noValidate>
+                                {!isLogin && (
+                                    <TextField
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        id="name"
+                                        label="Name"
+                                        name="name"
+                                        autoComplete="name"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        className="auth-input"
+                                    />
+                                )}
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email Address"
+                                    name="email"
+                                    autoComplete="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="auth-input"
+                                />
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="current-password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="auth-input"
+                                />
+                                <Button
+                                    type="button"
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    className="auth-button"
+                                    onClick={handleAuth}
+                                >
+                                    {isLogin ? 'Login' : 'Register'}
+                                </Button>
+                                <Typography variant="body2" className="auth-toggle">
+                                    {isLogin ? (
+                                        <>
+                                            Don't have an account?{' '}
+                                            <Link
+                                                href="#"
+                                                variant="body2"
+                                                onClick={() => setIsLogin(false)}
+                                                className="toggle-link"
+                                            >
+                                                Register
+                                            </Link>
+                                        </>
+                                    ) : (
+                                        <>
+                                            Already have an account?{' '}
+                                            <Link
+                                                href="#"
+                                                variant="body2"
+                                                onClick={() => setIsLogin(true)}
+                                                className="toggle-link"
+                                            >
+                                                Login
+                                            </Link>
+                                        </>
+                                    )}
+                                </Typography>
+                            </Box>
+                        </Box>
                     </Grid>
-                </Box>
+
+                    {/* Right Side (Image) */}
+                    <Grid item xs={12} md={6} className="image-container">
+                        <img
+                            src={doctorImage}// Replace with your image URL
+                            alt="Authentication"
+                            className="auth-image"
+                        />
+                    </Grid>
+                </Grid>
             </Box>
-        </Container>
+        </Box>
     );
 }
 
