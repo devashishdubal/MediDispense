@@ -1,13 +1,13 @@
-// App.js
-import React from 'react';
-import { ChakraProvider } from '@chakra-ui/react';
-import Dashboard from './components/dashboard'; // Import Dashboard component
+import logo from './logo.svg';
+import './App.css';
+import Login from './components/Login';
+import Register from './components/Register';
 
-const App = () => {
+function App() {
   return (
-    <ChakraProvider>
-      <Dashboard />  {/* Render the Dashboard component */}
-    </ChakraProvider>
+    <div className="App">
+      <Login></Login>
+    </div>
   );
 };
 

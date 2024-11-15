@@ -1,14 +1,15 @@
 // src/index.js
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';  // Optional custom styles
+import './index.css';
+import { ChakraProvider, defaultSystem } from "@chakra-ui/react"
 import App from './App';
 import { ChakraProvider } from '@chakra-ui/react';  // Import ChakraProvider
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ChakraProvider>  {/* Wrap App in ChakraProvider */}
+    <ChakraProvider value={defaultSystem}>
       <App />
     </ChakraProvider>
   </React.StrictMode>
