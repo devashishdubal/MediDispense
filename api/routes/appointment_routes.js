@@ -3,6 +3,7 @@ const Appointment = require('../models/appointment'); // Adjust the path as need
 const Doctor = require('../models/doctor');
 const router = express.Router();
 const mongoose = require('mongoose');
+
 router.post('/create', async (req, res) => {
     try {
         const { doctorName, userId, appointmentDate,  appointmentStart, appointmentEnd } = req.body;
@@ -12,7 +13,13 @@ router.post('/create', async (req, res) => {
         }
         const appointments = await Appointment.find({ doctorId: doctor._id, appointmentDate: appointmentDate, appointmentStart: appointmentStart,appointmentEnd: appointmentEnd });
         if (appointments.length > 0) {
-            return res.status(400).send('Timeslot already booked');
+            return res.status(400).json({message:'Timeslot already booked'});
+        }
+        const d = new Date(appointmentDate);
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const day = d.getDay();
+        if (doctor.availability.indexOf(days[day]) === -1) {
+            return res.status(400).json({message: 'Doctor is not available on this day'});
         }
         const notes = "";
         const status = "Scheduled";

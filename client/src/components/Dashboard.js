@@ -11,17 +11,14 @@ const Dashboard = () => {
   const [selectedDoctor, setSelectedDoctor] = useState(""); // Doctor state
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
   const [isBookingConfirmed, setIsBookingConfirmed] = useState(false); // Booking confirmation state
+  const [isError, setIsError] = useState(false); // Error state
+  const [errorMessage, setErrorMessage] = useState(""); // Error message
   const [previousAppointments, setPrevAppointments] = useState([]); // Previous appointments state
   const [doctors, setDoctors] = useState([]); // Doctors data
-  const auth = useAuth();
+  const {user,loggedIn,setUser,setLoggedIn} = useAuth();
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(auth.user);
-
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    }
     loadAppointments();
     loadDoctors();
   }, [user]);
@@ -29,7 +26,18 @@ const Dashboard = () => {
   // Load doctors from backend
   const loadDoctors = async () => {
     try {
-      const response = await fetch('http://localhost:5000/getDoctors');
+      const response = await fetch('http://localhost:8000/doctors/getall',{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+    });
+    if (!response.ok) {
+      // Handle server-side error
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to create appointment.');
+    }
       const data = await response.json();
       setDoctors(data);
     } catch (error) {
@@ -40,7 +48,18 @@ const Dashboard = () => {
   // Load previous appointments from backend
   const loadAppointments = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/get/${user._id}`);
+      const response = await fetch(`http://localhost:8000/appointments/get/${user._id}`,{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+    });
+    if (!response.ok) {
+      // Handle server-side error
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to create appointment.');
+    }
       const data = await response.json();
       setPrevAppointments(data);
     } catch (error) {
@@ -56,10 +75,6 @@ const Dashboard = () => {
     setSelectedTime(time);
   };
 
-  const handleDoctorChange = (e) => {
-    setSelectedDoctor(e.target.value);
-  };
-
   const handleBookAppointmentClick = () => {
     setIsModalOpen(true);
     setIsBookingConfirmed(false); // Reset booking confirmation status when opening the modal
@@ -69,12 +84,47 @@ const Dashboard = () => {
     setIsModalOpen(false);
   };
 
-  const handleConfirmAppointment = () => {
-    if (!selectedDate || !selectedTime || !selectedDoctor) {
-      alert("Please select a date, time, and doctor.");
-      return;
+  const handleConfirmAppointment = async () => {
+    try{
+      if (!selectedDate || !selectedTime || !selectedDoctor) {
+        alert("Please select a date, time, and doctor.");
+        return;
+      }
+      const data = {
+        doctorName:selectedDoctor,
+         userId: user._id,
+         appointmentDate: selectedDate,
+         appointmentStart: selectedTime,
+         appointmentEnd:(selectedTime + 1)
+      }
+  
+      const response = await fetch("http://localhost:8000/appointments/create", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        credentials: 'include',
+    });
+    if (!response.ok) {
+      // Handle server-side error
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to create appointment.');
     }
-    setIsBookingConfirmed(true); // Set confirmation status to true
+      setIsBookingConfirmed(true); // Set confirmation status to true
+      setIsError(false);
+      setErrorMessage('');
+      setTimeout(() => {
+        
+      }, 3000); // Delay of 3 seconds
+      loadAppointments();
+    } catch (error) {
+      console.log(error);
+      setIsError(true);
+      setErrorMessage(error.message);
+      setIsBookingConfirmed(false);
+    }
+    // setIsModalOpen(false);
   };
 
   return (
@@ -121,11 +171,11 @@ const Dashboard = () => {
             <Box>
               <Grid container spacing={2}>
                 {previousAppointments.map((appointment) => (
-                  <Grid item xs={12} key={appointment.id}>
+                  <Grid item xs={12} key={appointment._id}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: 1 }}>
-                      <Typography variant="body1">{appointment.date}</Typography>
-                      <Typography variant="body1">{appointment.time}</Typography>
-                      <Typography variant="body1">{appointment.doctor}</Typography>
+                      <Typography variant="body1">{appointment.appointmentDate}</Typography>
+                      <Typography variant="body1">{appointment.appointmentStart}</Typography>
+                      <Typography variant="body1">{appointment.doctorId.name}</Typography>
                       <Typography variant="body2" color={appointment.status === 'Completed' ? 'green' : 'orange'}>
                         {appointment.status}
                       </Typography>
@@ -180,13 +230,14 @@ const Dashboard = () => {
             <Grid container spacing={1}>
               {Array.from({ length: 7 }, (_, i) => {
                 const timeSlot = `${10 + i}:00`;
+                const v = 10+i;
                 return (
-                  <Grid item xs={4} key={timeSlot}>
+                  <Grid item xs={4} key={v}>
                     <Button
-                      variant={selectedTime === timeSlot ? 'contained' : 'outlined'}
+                      variant={selectedTime === v ? 'contained' : 'outlined'}
                       color="primary"
                       fullWidth
-                      onClick={() => handleTimeChange(timeSlot)}
+                      onClick={() => handleTimeChange(v)}
                     >
                       {timeSlot}
                     </Button>
@@ -202,12 +253,12 @@ const Dashboard = () => {
               <InputLabel>Doctor</InputLabel>
               <Select
                 value={selectedDoctor}
-                onChange={handleDoctorChange}
+                onChange={(e) => {setSelectedDoctor(e.target.value);}}
                 label="Doctor"
                 fullWidth
               >
                 {doctors.map((doctor) => (
-                  <MenuItem key={doctor.id} value={doctor.id}>
+                  <MenuItem key={doctor._id} value={doctor.name}>
                     {doctor.name} ({doctor.specialization})
                   </MenuItem>
                 ))}
@@ -223,6 +274,16 @@ const Dashboard = () => {
               </Typography>
               <Typography variant="body1">
                 Your appointment with {selectedDoctor} is confirmed for {selectedDate?.toLocaleDateString()} at {selectedTime}.
+              </Typography>
+            </Box>
+          )}
+          {isError && selectedDoctor && (
+            <Box sx={{ marginTop: 2, textAlign: 'center' }}>
+              <Typography variant="h6" color="green">
+                Error!
+              </Typography>
+              <Typography variant="body1">
+                {errorMessage}
               </Typography>
             </Box>
           )}
