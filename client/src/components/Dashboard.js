@@ -127,6 +127,11 @@ const Dashboard = () => {
     // setIsModalOpen(false);
   };
 
+  const logOut = () => {
+    setUser(null);
+    navigate("/login");
+  }
+
   return (
     <Box
       sx={{
@@ -205,6 +210,24 @@ const Dashboard = () => {
         }}
       >
         Book Appointment
+      </Button>
+
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={logOut}
+        sx={{
+          position: 'absolute',
+          top: 20,
+          right: 20,
+          backgroundColor: '#66B3FF',
+          '&:hover': { backgroundColor: '#4DA6FF' },
+          padding: '16px 32px', // Increased padding for a larger button
+          fontSize: '1.2rem',    // Increase font size for better readability
+          height: '56px',        // Increase the height of the button
+        }}
+      >
+        Log Out
       </Button>
 
       {/* Appointment Booking Modal */}
