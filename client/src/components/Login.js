@@ -4,10 +4,12 @@ import { Box, Button, Flex, Input, Stack, Heading, Text, Link, Toaster } from '@
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { useToast } from "@chakra-ui/toast";
 import axios from 'axios';
+import { useAuth } from './AuthProvider';
 
 function Auth() {
     const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
     const toast = useToast();
+    const auth = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -29,22 +31,13 @@ function Auth() {
                 return;
             }
 
-            const endpoint = 'http://localhost:8000/users/' + (isLogin ? 'login' : 'register');
-            console.log(endpoint);
-            const response = await fetch(endpoint, {
-                method: 'POST',  // HTTP method
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: "application/json", 
-                    
-                },
-                body: JSON.stringify({
-                    name,
-                    email,
-                    password,
-                }),
-                credentials: 'include',  // Send cookies with the request (same as withCredentials in axios)
-            });
+            if (isLogin) {
+                await auth.loginAction({ email, password });
+            }
+
+            if (!isLogin) {
+                await auth.registerAction({ name, email, password });
+            }
 
             console.log("Success");
             // Show toast message for success

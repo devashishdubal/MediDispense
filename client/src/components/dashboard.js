@@ -4,6 +4,9 @@ import { Box, Text, Button, Flex, Grid, Modal, ModalOverlay, ModalContent, Modal
 import DatePicker from 'react-datepicker'; // Import react-datepicker
 import 'react-datepicker/dist/react-datepicker.css'; // Import styles for react-datepicker
 import { motion } from 'framer-motion'; // Import motion from framer-motion for animations
+import { useAuth } from './AuthProvider';
+import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
 
 const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -11,9 +14,12 @@ const Dashboard = () => {
   const [selectedDoctor, setSelectedDoctor] = useState(null); // State for selected doctor
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
   const [isBookingConfirmed, setIsBookingConfirmed] = useState(false); // State for booking confirmation
+  const auth = useAuth();
+  const navigate = useNavigate();
 
   const [previousAppointments, setPrevAppointments] = useState([]);
   const [doctors,setDoctors] = useState([]);
+  const [user,setUser] = useState(auth.user);
 
   const loadDoctors = async () => {
     try {
@@ -90,6 +96,9 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    if (!user){
+      navigate('/login');
+    }
     loadAppointments();
     loadDoctors();
   }, [])
