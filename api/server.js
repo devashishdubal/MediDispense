@@ -9,6 +9,15 @@ const port = 8000;
 app.use(express.json());
 app.use("/users", userRoutes);
 
+const cors = require('cors');
+const corsOptions ={
+    origin:'http://localhost:3000', 
+    credentials:true,            //access-control-allow-credentials:true
+    // optionSuccessStatus:200,
+    methods:"GET,POST,PUT,DELETE,PATCH"
+}
+app.use(cors(corsOptions));
+
 mongoose.connect(process.env.mongo_url).then(() => {
     console.log('Connected to MongoDB');
 })
