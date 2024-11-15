@@ -3,11 +3,14 @@ import React, { useState } from 'react';
 import { Box, Button, Flex, Input, Stack, Heading, Text, Link, Toaster } from '@chakra-ui/react';
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { useToast } from "@chakra-ui/toast";
-import axios from 'axios';
+import { useAuth } from '../Contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function Auth() {
     const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
     const toast = useToast();
+    const {user,loggedIn,setUser,setLoggedIn} = useAuth();
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -45,6 +48,11 @@ function Auth() {
                 }),
                 credentials: 'include',  // Send cookies with the request (same as withCredentials in axios)
             });
+            const user = await response.json();
+            setIsLogin(true);
+            console.log(user);
+            setUser(user);
+            
 
             console.log("Success");
             // Show toast message for success
@@ -55,6 +63,7 @@ function Auth() {
                 duration: 3000,
                 isClosable: true,
             });
+            navigate("/dashboard");
         } catch (Error) {
             console.log(Error);
         }

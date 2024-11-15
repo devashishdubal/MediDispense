@@ -19,10 +19,12 @@ router.post("/register", (req, res) => {
             password: password // Make sure to hash the password before saving
             // dateOfBirth: req.body.dateOfBirth // Date format: year, month (0-indexed), day
         });
-        newUser.save().then(user => console.log('User saved:', user))
+        newUser.save().then(user => {
+            console.log('User saved:', user)
+            return res.status(201).json(user);
+        })
         .catch(error => console.error('Error saving user:', error));
 
-        res.send("User created!");
     } catch (error) {
         console.log(error);
         res.status(500).send("Error creating user");
@@ -35,12 +37,11 @@ router.post("/login", (req, res) => {
         const password = req.body.password;
         User.findOne({ email: email }).then(user => {
             if (!user) {
-                res.status(401).send("User not found");
+                return res.status(401).send("User not found");
             } else if (user.password !== password) {
-                res.status(401).send("Invalid password");
-            } else {
-                res.status(200).send("User logged in!");
-            }
+                return res.status(401).send("Invalid password");
+            } 
+            return res.status(200).send(user);
         });
     } catch (error) {
         console.log(error);
