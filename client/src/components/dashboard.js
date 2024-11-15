@@ -12,19 +12,45 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
   const [isBookingConfirmed, setIsBookingConfirmed] = useState(false); // State for booking confirmation
 
-  // Dummy data for doctors
-  const doctors = [
-    { id: 1, name: 'Dr. Smith', specialization: 'Cardiologist' },
-    { id: 2, name: 'Dr. Johnson', specialization: 'Dermatologist' },
-    { id: 3, name: 'Dr. Lee', specialization: 'Orthopedic' },
-  ];
+  const [previousAppointments, setPrevAppointments] = useState([]);
+  const [doctors,setDoctors] = useState([]);
 
-  // Dummy data for previous appointments
-  const previousAppointments = [
-    { id: 1, date: '2024-10-05', time: '10:00', doctor: 'Dr. Smith', status: 'Completed' },
-    { id: 2, date: '2024-10-12', time: '14:00', doctor: 'Dr. Johnson', status: 'Completed' },
-    { id: 3, date: '2024-11-02', time: '12:00', doctor: 'Dr. Lee', status: 'Upcoming' },
-  ];
+  const loadDoctors = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/getDoctors', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: "application/json",  
+        },
+        credentials: 'include'
+      });
+      const data = await response.json();
+      console.log(data);
+      setDoctors(data);
+
+    } catch (error) {
+      console.error('Error loading doctors:', error);
+    }
+  }
+
+  const loadAppointments = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/get/${user._id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: "application/json",  
+        },
+        credentials: 'include'
+      });
+      const data = await response.json();
+      console.log(data);
+      setPrevAppointments(data);
+    } catch (error) {
+      console.error('Error loading appointments:', error);
+    }
+  }
 
   // Handle date change
   const handleDateChange = (date) => {
@@ -62,6 +88,12 @@ const Dashboard = () => {
     }
     setIsBookingConfirmed(true); // Set confirmation status to true
   };
+
+  useEffect(() => {
+    loadAppointments();
+    loadDoctors();
+  }, [])
+  
 
   return (
     <Box
