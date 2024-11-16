@@ -7,13 +7,14 @@ router.get("/", (req, res) => {
     res.send("Hello World2!");
 });
 
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
     try {
         const name = req.body.name;
         const email = req.body.email;
+        console.log(email);
         const password = req.body.password;
         // const dateOfBirth = req.body.dateOfBirth;
-        const existingUser = User.findOne({ email });
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "User already registered with this email." });
         }
