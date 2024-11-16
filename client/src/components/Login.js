@@ -75,7 +75,7 @@ function Login() {
             <Box className="auth-box">
                 <Grid container spacing={2}>
                     {/* Left Side (Form) */}
-                    <Grid item xs={12} md={6} className="form-container">
+                    <Grid item xs={12} md={6} className="form-container" sx={{ paddingRight: { md: 4 } }}>
                         <Box>
                             <img
                                 src={logoImage} // Replace with your logo's path
@@ -149,7 +149,7 @@ function Login() {
                                 >
                                     {isLogin ? 'Login' : 'Register'}
                                 </Button>
-                                <Typography variant="body2" className="auth-toggle">
+                                <Typography variant="body2" className="auth-toggle" sx={{ marginTop: 2 }}>
                                     {isLogin ? (
                                         <>
                                             Don't have an account?{' '}
@@ -181,7 +181,7 @@ function Login() {
                     </Grid>
 
                     {/* Right Side (Image) */}
-                    <Grid item xs={12} md={6} className="image-container">
+                    <Grid item xs={12} md={6} className="image-container" sx={{ paddingLeft: { md: 4 } }}>
                         <img
                             src={doctorImage}// Replace with your image URL
                             alt="Authentication"
