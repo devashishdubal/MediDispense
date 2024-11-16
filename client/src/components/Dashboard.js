@@ -155,9 +155,9 @@ const Dashboard = () => {
       </Typography>
 
       {/* Main content */}
-      <Grid container justifyContent="flex-start" alignItems="flex-start" spacing={3}>
+      <Grid container justifyContent="center" alignItems="flex-start" spacing={3}>
         {/* Left-aligned grid item for Previous Appointments */}
-        <Grid item xs={12} sm={8} md={6} lg={5}>
+        <Grid item xs={12}>
           <Paper
             sx={{
               padding: 3,
@@ -168,27 +168,65 @@ const Dashboard = () => {
             }}
           >
             {/* Previous Appointments Title */}
-            <Typography variant="h5" align="left" color="text.primary" sx={{ marginBottom: 2 }}>
+            <Typography 
+              variant="h5" 
+              align="left" 
+              color="text.primary" 
+              sx={{ marginBottom: 2, fontWeight: 'bold' }}
+            >
               Previous Appointments
             </Typography>
 
             {/* Previous Appointments Table */}
             <Box>
-              <Grid container spacing={2}>
-                {previousAppointments.map((appointment) => (
-                  <Grid item xs={12} key={appointment._id}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: 1 }}>
-                      <Typography variant="body1">{appointment.appointmentDate}</Typography>
-                      <Typography variant="body1">{appointment.appointmentStart}</Typography>
-                      <Typography variant="body1">{appointment.doctorId.name}</Typography>
-                      <Typography variant="body2" color={appointment.status === 'Completed' ? 'green' : 'orange'}>
-                        {appointment.status}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                ))}
+              <Grid container spacing={3}>
+                {previousAppointments.map((appointment) => {
+                  // Extract and format the date
+                  const d = new Date(appointment.appointmentDate);
+                  const formattedDate = d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear();
+
+                  return (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={appointment._id}>
+                      <Box 
+                        sx={{ 
+                          border: '1px solid #ddd', 
+                          borderRadius: 2, 
+                          padding: 2, 
+                          boxShadow: 2, 
+                          backgroundColor: '#f9f9f9',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          gap: 1 
+                        }}
+                      >
+                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                          {appointment.doctorId.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {formattedDate}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {appointment.appointmentStart + ":00"}
+                        </Typography>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            fontWeight: 'bold', 
+                            color: appointment.status === 'Completed' ? 'green' : 'orange',
+                            textAlign: 'center'
+                          }}
+                        >
+                          {appointment.status}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  );
+                })}
               </Grid>
             </Box>
+
+
           </Paper>
         </Grid>
       </Grid>
@@ -218,7 +256,7 @@ const Dashboard = () => {
         onClick={logOut}
         sx={{
           position: 'absolute',
-          top: 20,
+          top: 30,
           right: 20,
           backgroundColor: '#66B3FF',
           '&:hover': { backgroundColor: '#4DA6FF' },
