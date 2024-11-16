@@ -15,7 +15,7 @@ const Dashboard = () => {
   const [errorMessage, setErrorMessage] = useState(""); // Error message
   const [previousAppointments, setPrevAppointments] = useState([]); // Previous appointments state
   const [doctors, setDoctors] = useState([]); // Doctors data
-  const {user,loggedIn,setUser,setLoggedIn} = useAuth();
+  const { user, loggedIn, setUser, setLoggedIn } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,18 +26,18 @@ const Dashboard = () => {
   // Load doctors from backend
   const loadDoctors = async () => {
     try {
-      const response = await fetch('http://localhost:8000/doctors/getall',{
+      const response = await fetch('http://localhost:8000/doctors/getall', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
         },
         credentials: 'include',
-    });
-    if (!response.ok) {
-      // Handle server-side error
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to create appointment.');
-    }
+      });
+      if (!response.ok) {
+        // Handle server-side error
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create appointment.');
+      }
       const data = await response.json();
       setDoctors(data);
     } catch (error) {
@@ -48,18 +48,18 @@ const Dashboard = () => {
   // Load previous appointments from backend
   const loadAppointments = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/appointments/get/${user._id}`,{
+      const response = await fetch(`http://localhost:8000/appointments/get/${user._id}`, {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
         },
         credentials: 'include',
-    });
-    if (!response.ok) {
-      // Handle server-side error
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to create appointment.');
-    }
+      });
+      if (!response.ok) {
+        // Handle server-side error
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create appointment.');
+      }
       const data = await response.json();
       setPrevAppointments(data);
     } catch (error) {
@@ -85,37 +85,37 @@ const Dashboard = () => {
   };
 
   const handleConfirmAppointment = async () => {
-    try{
+    try {
       if (!selectedDate || !selectedTime || !selectedDoctor) {
         alert("Please select a date, time, and doctor.");
         return;
       }
       const data = {
-        doctorName:selectedDoctor,
-         userId: user._id,
-         appointmentDate: selectedDate,
-         appointmentStart: selectedTime,
-         appointmentEnd:(selectedTime + 1)
+        doctorName: selectedDoctor,
+        userId: user._id,
+        appointmentDate: selectedDate,
+        appointmentStart: selectedTime,
+        appointmentEnd: (selectedTime + 1)
       }
-  
+
       const response = await fetch("http://localhost:8000/appointments/create", {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
         credentials: 'include',
-    });
-    if (!response.ok) {
-      // Handle server-side error
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to create appointment.');
-    }
+      });
+      if (!response.ok) {
+        // Handle server-side error
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create appointment.');
+      }
       setIsBookingConfirmed(true); // Set confirmation status to true
       setIsError(false);
       setErrorMessage('');
       setTimeout(() => {
-        
+
       }, 3000); // Delay of 3 seconds
       loadAppointments();
     } catch (error) {
@@ -168,10 +168,10 @@ const Dashboard = () => {
             }}
           >
             {/* Previous Appointments Title */}
-            <Typography 
-              variant="h5" 
-              align="left" 
-              color="text.primary" 
+            <Typography
+              variant="h5"
+              align="left"
+              color="text.primary"
               sx={{ marginBottom: 2, fontWeight: 'bold' }}
             >
               Previous Appointments
@@ -187,17 +187,17 @@ const Dashboard = () => {
 
                   return (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={appointment._id}>
-                      <Box 
-                        sx={{ 
-                          border: '1px solid #ddd', 
-                          borderRadius: 2, 
-                          padding: 2, 
-                          boxShadow: 2, 
+                      <Box
+                        sx={{
+                          border: '1px solid #ddd',
+                          borderRadius: 2,
+                          padding: 2,
+                          boxShadow: 2,
                           backgroundColor: '#f9f9f9',
                           display: 'flex',
                           flexDirection: 'column',
                           justifyContent: 'space-between',
-                          gap: 1 
+                          gap: 1
                         }}
                       >
                         <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
@@ -209,10 +209,10 @@ const Dashboard = () => {
                         <Typography variant="body2" color="text.secondary">
                           {appointment.appointmentStart + ":00"}
                         </Typography>
-                        <Typography 
-                          variant="body2" 
-                          sx={{ 
-                            fontWeight: 'bold', 
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: 'bold',
                             color: appointment.status === 'Completed' ? 'green' : 'orange',
                             textAlign: 'center'
                           }}
@@ -234,17 +234,17 @@ const Dashboard = () => {
       {/* Button to open modal */}
       <Button
         variant="contained"
-        color="primary"
         onClick={handleBookAppointmentClick}
         sx={{
           position: 'absolute',
           bottom: 20,
           right: 20,
-          backgroundColor: '#66B3FF',
-          '&:hover': { backgroundColor: '#4DA6FF' },
-          padding: '16px 32px', // Increased padding for a larger button
-          fontSize: '1.2rem',    // Increase font size for better readability
-          height: '56px',        // Increase the height of the button
+          backgroundColor: '#f9f9f9', // White background
+          color: '#003366', // Text color for better contrast
+          '&:hover': { backgroundColor: '#F0F0F0' }, // Light gray on hover
+          padding: '16px 32px',
+          fontSize: '1.2rem',
+          height: '56px',
         }}
       >
         Book Appointment
@@ -252,17 +252,17 @@ const Dashboard = () => {
 
       <Button
         variant="contained"
-        color="primary"
         onClick={logOut}
         sx={{
           position: 'absolute',
           top: 30,
           right: 20,
-          backgroundColor: '#66B3FF',
-          '&:hover': { backgroundColor: '#4DA6FF' },
-          padding: '16px 32px', // Increased padding for a larger button
-          fontSize: '1.2rem',    // Increase font size for better readability
-          height: '56px',        // Increase the height of the button
+          backgroundColor: '#f9f9f9', // White background
+          color: '#003366', // Text color for better contrast
+          '&:hover': { backgroundColor: '#F0F0F0' }, // Light gray on hover
+          padding: '16px 32px',
+          fontSize: '1.2rem',
+          height: '56px',
         }}
       >
         Log Out
@@ -291,7 +291,7 @@ const Dashboard = () => {
             <Grid container spacing={1}>
               {Array.from({ length: 7 }, (_, i) => {
                 const timeSlot = `${10 + i}:00`;
-                const v = 10+i;
+                const v = 10 + i;
                 return (
                   <Grid item xs={4} key={v}>
                     <Button
@@ -314,7 +314,7 @@ const Dashboard = () => {
               <InputLabel>Doctor</InputLabel>
               <Select
                 value={selectedDoctor}
-                onChange={(e) => {setSelectedDoctor(e.target.value);}}
+                onChange={(e) => { setSelectedDoctor(e.target.value); }}
                 label="Doctor"
                 fullWidth
               >
