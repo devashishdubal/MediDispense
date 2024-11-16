@@ -11,7 +11,10 @@ router.post("/register", async (req, res) => {
     try {
         const name = req.body.name;
         const email = req.body.email;
-        console.log(email);
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: 'Invalid email format' });
+        }
         const password = req.body.password;
         // const dateOfBirth = req.body.dateOfBirth;
         const existingUser = await User.findOne({ email });

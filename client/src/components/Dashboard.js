@@ -340,7 +340,7 @@ const Dashboard = () => {
           )}
           {isError && selectedDoctor && (
             <Box sx={{ marginTop: 2, textAlign: 'center' }}>
-              <Typography variant="h6" color="green">
+              <Typography variant="h6" color="red">
                 Error!
               </Typography>
               <Typography variant="body1">
