@@ -14,6 +14,9 @@ router.post("/register", async (req, res) => {
         const phoneNumber = req.body.phoneNumber;
         const specialization = req.body.specialization;
         const availability = req.body.availability;
+        if (!name || !email || !phoneNumber || !specialization || !availability) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
         // const dateOfBirth = req.body.dateOfBirth;
         const newDoctor = new Doctor({
             name: name,
